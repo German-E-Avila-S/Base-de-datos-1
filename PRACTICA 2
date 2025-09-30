@@ -1,0 +1,73 @@
+Anexos
+//Crear Base//
+CREATE DATABASE empresa;
+USE empresa;
+
+//Crear tabla empleados y departamentos//
+CREATE TABLE departamentos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  ubicacion VARCHAR(100)
+);
+CREATE TABLE empleados (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  apellido VARCHAR(50) NOT NULL,
+  salario DECIMAL(10,2),
+  departamento_id INT,
+  FOREIGN KEY (departamento_id) REFERENCES departamentos(id)
+);
+
+//Insertar datos//
+INSERT INTO departamentos (nombre, ubicacion) VALUES ('Recursos Humanos', 'Planta 1');
+INSERT INTO departamentos (nombre, ubicacion) VALUES ('Ventas', 'Planta 2');
+INSERT INTO departamentos (nombre, ubicacion) VALUES ('IT', 'Planta 3');
+
+INSERT INTO empleados (nombre, apellido, salario, departamento_id) VALUES ('Ana', 'López', 45000, 1);
+INSERT INTO empleados (nombre, apellido, salario, departamento_id) VALUES ('Juan', 'Pérez', 50000, 2);
+INSERT INTO empleados (nombre, apellido, salario, departamento_id) VALUES ('Carlos', 'García', 60000, 3);
+
+//Consulta con JOINS//
+
+SELECT empleados.nombre, empleados.apellido, departamentos.nombre AS departamento
+FROM empleados
+JOIN departamentos ON empleados.departamento_id = departamentos.id;
+
+SELECT empleados.nombre, empleados.apellido
+FROM empleados
+JOIN departamentos ON empleados.departamento_id = departamentos.id
+WHERE departamentos.nombre = 'IT';
+
+//Consulta con Agregacion//
+SELECT departamentos.nombre, COUNT(empleados.id) AS num_empleados
+FROM empleados
+JOIN departamentos ON empleados.departamento_id = departamentos.id
+GROUP BY departamentos.nombre;
+
+SELECT departamentos.nombre, AVG(empleados.salario) AS salario_promedio
+FROM empleados
+JOIN departamentos ON empleados.departamento_id = departamentos.id
+GROUP BY departamentos.nombre;
+
+SELECT MAX(salario) AS salario_maximo, MIN(salario) AS salario_minimo FROM empleados;
+
+//Modificacion de tabla//
+ALTER TABLE empleados ADD COLUMN fecha_contratacion DATE;
+
+UPDATE empleados SET fecha_contratacion = '2020-05-10' WHERE nombre = 'Ana';
+UPDATE empleados SET fecha_contratacion = '2019-07-22' WHERE nombre = 'Juan';
+UPDATE empleados SET fecha_contratacion = '2021-01-15' WHERE nombre = 'Carlos';
+
+//Consulta con condiciones//
+SELECT nombre, apellido, fecha_contratacion 
+FROM empleados 
+WHERE fecha_contratacion > '2020-01-01';
+
+SELECT nombre, apellido, salario 
+FROM empleados 
+ORDER BY salario DESC;
+
+//Eliminacion de datos//
+DELETE FROM empleados WHERE nombre = 'Carlos';
+
+DROP TABLE empleados;
